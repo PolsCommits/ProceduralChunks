@@ -1,6 +1,4 @@
 # ProceduralChunks
-Prcedural chunk genration using Unity's Perlin Noise
-
 Unity-based procedural voxel chunk generator. Landscape is generated using Unity's Perlin Noise functionality.
 
 Playable build at https://polscommits.github.io/ProceduralChunks/
