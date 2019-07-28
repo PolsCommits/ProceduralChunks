@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProceduralVoxelMap : MonoBehaviour
+public class ProceduralBlockMap : MonoBehaviour
 {
     // List of generated chunks
     List<GameObject> chunks = new List<GameObject>();
@@ -25,9 +25,9 @@ public class ProceduralVoxelMap : MonoBehaviour
 
     private void Start()
     {
-        for(int i = 0; i < spawnAreaSize; i++)
+        for (int i = 0; i < spawnAreaSize; i++)
         {
-            for(int j = 0; j < spawnAreaSize; j++)
+            for (int j = 0; j < spawnAreaSize; j++)
             {
                 chunks.Add(NewChunk(i, j, defMaterial));
             }
@@ -49,18 +49,18 @@ public class ProceduralVoxelMap : MonoBehaviour
 
         Debug.Log(transform.position);
 
-        chunk.AddComponent<VoxelChunk>();
-        chunk.GetComponent<VoxelChunk>().chunkX = posX;
-        chunk.GetComponent<VoxelChunk>().chunkY = posY;
-        chunk.GetComponent<VoxelChunk>().width = chunkWidth;
-        chunk.GetComponent<VoxelChunk>().height = chunkHeight;
-        chunk.GetComponent<VoxelChunk>().depth = chunkDepth;
-        chunk.GetComponent<VoxelChunk>().defaultMaterial = defMaterial;
+        chunk.AddComponent<BlockChunk>();
+        chunk.GetComponent<BlockChunk>().chunkX = posX;
+        chunk.GetComponent<BlockChunk>().chunkY = posY;
+        BlockChunk.width = chunkWidth;
+        BlockChunk.height = chunkHeight;
+        BlockChunk.depth = chunkDepth;
+        chunk.GetComponent<BlockChunk>().defaultMaterial = defMaterial;
 
-        chunk.GetComponent<VoxelChunk>().SetupChunk(0, 0);
-        chunk.GetComponent<VoxelChunk>().GenerateMesh();
+        chunk.GetComponent<BlockChunk>().SetupChunk(0, 0);
+        chunk.GetComponent<BlockChunk>().GenerateMesh();
 
-        UpdateNeighbours(chunk.GetComponent<VoxelChunk>());
+        UpdateNeighbours(chunk.GetComponent<BlockChunk>());
 
         return chunk;
     }
@@ -75,24 +75,24 @@ public class ProceduralVoxelMap : MonoBehaviour
     // Check if new chuynks need to be generated
     private void AddNewChunks()
     {
-        int x = currentChunk.GetComponent<VoxelChunk>().chunkX;
-        int y = currentChunk.GetComponent<VoxelChunk>().chunkY;
+        int x = currentChunk.GetComponent<BlockChunk>().chunkX;
+        int y = currentChunk.GetComponent<BlockChunk>().chunkY;
 
-        for(int i = x - renderDistance; i < x + renderDistance; i++)
+        for (int i = x - renderDistance; i < x + renderDistance; i++)
         {
-            for(int j = y - renderDistance; j < y + renderDistance; j++)
+            for (int j = y - renderDistance; j < y + renderDistance; j++)
             {
                 bool exists = false;
-                foreach(GameObject chunkObj in chunks)
+                foreach (GameObject chunkObj in chunks)
                 {
-                    if(i == chunkObj.GetComponent<VoxelChunk>().chunkX && j == chunkObj.GetComponent<VoxelChunk>().chunkY)
+                    if (i == chunkObj.GetComponent<BlockChunk>().chunkX && j == chunkObj.GetComponent<BlockChunk>().chunkY)
                     {
                         exists = true;
                         break;
                     }
                 }
 
-                if(!exists)
+                if (!exists)
                 {
                     GameObject newChunk = NewChunk(i, j, defMaterial);
                     chunks.Add(newChunk);
@@ -107,7 +107,7 @@ public class ProceduralVoxelMap : MonoBehaviour
         float dist = 999999f;
         GameObject auxChunk = null;
 
-        foreach(GameObject chunkObj in chunks)
+        foreach (GameObject chunkObj in chunks)
         {
             if (Vector3.Distance(player.transform.position, chunkObj.transform.position) < dist)
             {
@@ -119,24 +119,24 @@ public class ProceduralVoxelMap : MonoBehaviour
         currentChunk = auxChunk;
     }
 
-    private void UpdateNeighbours(VoxelChunk targetChunk)
+    private void UpdateNeighbours(BlockChunk targetChunk)
     {
         //Update neighbours for single chunk
         foreach (GameObject chunkObj in chunks)
-            {
-                VoxelChunk chunk = chunkObj.GetComponent<VoxelChunk>();
+        {
+            BlockChunk chunk = chunkObj.GetComponent<BlockChunk>();
 
-                if (chunk != targetChunk)
+            if (chunk != targetChunk)
+            {
+                if (adjCheck(chunk, targetChunk))
                 {
-                    if (adjCheck(chunk, targetChunk))
-                    {
-                        setAdjChunk(targetChunk, chunk);
-                    }
+                    setAdjChunk(targetChunk, chunk);
                 }
             }
+        }
     }
 
-    private bool adjCheck(VoxelChunk a, VoxelChunk b)
+    private bool adjCheck(BlockChunk a, BlockChunk b)
     {
         if (a != b)
         {
@@ -151,7 +151,7 @@ public class ProceduralVoxelMap : MonoBehaviour
         return false;
     }
 
-    private void setAdjChunk(VoxelChunk source, VoxelChunk target)
+    private void setAdjChunk(BlockChunk source, BlockChunk target)
     {
         int x = target.chunkX - source.chunkX;
         int y = target.chunkY - source.chunkY;
